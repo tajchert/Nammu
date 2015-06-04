@@ -5,3 +5,7 @@
 .DS_Store
 /build
 /captures
+# Idea
+*.iml
+.idea/
+nammu/gradle.properties
