@@ -75,11 +75,11 @@ public class Nammu {
         return "MNC".equals(Build.VERSION.CODENAME);
     }
 
-    public static void runWithPermission(Activity activity, String permission, PermissionCallback permissionCallback) {
-        runWithPermission(activity, new String[]{permission}, permissionCallback);
+    public static void askForPermission(Activity activity, String permission, PermissionCallback permissionCallback) {
+        askForPermission(activity, new String[]{permission}, permissionCallback);
     }
 
-    public static void runWithPermission(Activity activity, String[] permissions, PermissionCallback permissionCallback) {
+    public static void askForPermission(Activity activity, String[] permissions, PermissionCallback permissionCallback) {
         if (permissionCallback == null) {
             return;
         }

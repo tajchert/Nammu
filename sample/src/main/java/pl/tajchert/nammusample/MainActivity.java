@@ -70,8 +70,6 @@ import pl.tajchert.nammusample.contacts.ContactsFragment;
  */
 public class MainActivity extends FragmentActivity implements PermissionListener {
     public static final String TAG = "MainActivity";
-    private Nammu nammu;
-
     /**
      * Permissions required to read and write contacts. Used by the {@link ContactsFragment}.
      */
@@ -90,11 +88,11 @@ public class MainActivity extends FragmentActivity implements PermissionListener
         Log.i(TAG, "Show camera button pressed. Checking permission.");
         // BEGIN_INCLUDE(camera_permission)
         // Check if the Camera permission is already available.
-        Nammu.runWithPermission(this, Manifest.permission.CAMERA, new PermissionCallback() {
+        Nammu.askForPermission(this, Manifest.permission.CAMERA, new PermissionCallback() {
             @Override
             public void permissionGranted() {
                 showCameraPreview();
-                nammu.savePermission(Manifest.permission.CAMERA);
+                Nammu.savePermission(Manifest.permission.CAMERA);
                 Toast.makeText(MainActivity.this, R.string.permision_available_camera, Toast.LENGTH_SHORT).show();
             }
 
@@ -113,11 +111,11 @@ public class MainActivity extends FragmentActivity implements PermissionListener
     public void showContacts(View v) {
         Log.i(TAG, "Show contacts button pressed. Checking permissions.");
         // Verify that all required contact permissions have been granted.
-        Nammu.runWithPermission(this, PERMISSIONS_CONTACT, new PermissionCallback() {
+        Nammu.askForPermission(this, PERMISSIONS_CONTACT, new PermissionCallback() {
             @Override
             public void permissionGranted() {
                 showContactDetails();
-                nammu.savePermission(PERMISSIONS_CONTACT);
+                Nammu.savePermission(PERMISSIONS_CONTACT);
                 Toast.makeText(MainActivity.this, R.string.permision_available_contacts, Toast.LENGTH_SHORT).show();
             }
 
