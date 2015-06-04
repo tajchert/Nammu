@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="pl.tajchert.nammusample" >
+
+
+    <!-- Note that all required permissions are declared here in the Android manifest.
+     On Android M and above, use of these permissions is only requested at run time. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- The following permissions are only requested if the device is on M or above.
+     On older platforms these permissions are not requested and will not be available. -->
+    <uses-permission-sdk-m android:name="android.permission.READ_CONTACTS" />
+    <uses-permission-sdk-m android:name="android.permission.WRITE_CONTACTS" />
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
