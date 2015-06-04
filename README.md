@@ -31,4 +31,4 @@ After that each time you want to make sure if permissions are still there - `Nam
 As library monitors your Permissions at any point of time (just call `init()`) you can get list of monitored Persmissions -`Nammu.getPrevPermissions()`, removed some `Nammu.removePermission(PermissionString)`, or check if is monitored `Nammu.containsPermission(PermissionString)`.
 
 ###How to import it?
-As for now it is NOT hosted at Maven/JCenter etc. as it is based on preview build of Android M which SDK is not available on those platforms. Till that time just copy/past all classes from library module or even whole module.
+As for now it is NOT hosted at Maven/JCenter etc. as it is based on preview build of Android M which SDK is not available on those platforms. Till that time just copy/paste all classes from library module or even whole module.
