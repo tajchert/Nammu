@@ -7,7 +7,7 @@ Nammu is a simple library to speed up working with new Runtime Permissions intro
 Google docs is [here](https://developer.android.com/preview/features/runtime-permissions.html).
 TLDR: like old-loved permissions that were ask during intallation but this time they are more dynamic (should be ask only when they are needed) and can be revoked by user at any time.
 
-![Source of all evil](https://raw.githubusercontent.com/tajchert/Nammu/master/image/screenshot.png)
+<img src="image/screenshot.png" width="400" height="672" alt="Source of all evil"/>
 
 ###Why I should care?
 Beacause your user can revoke most essential part of your app and quite probably there will be a lot of app crashes.
