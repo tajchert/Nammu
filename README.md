@@ -9,7 +9,7 @@ TLDR: like old-loved permissions that were ask during intallation but this time 
 
 <img src="image/screenshot.png" width="400" height="672" alt="Source of all evil"/>
 
-###Why I should care?
+###Why should I care?
 Beacause your user can revoke most essential part of your app and quite probably there will be a lot of app crashes.
 Current solution you can see here - [Google sample](https://github.com/googlesamples/android-RuntimePermissions) basically there is a lot that happens with Activity that is used to check and grant permissions. Also permissions rights are checked many times in the code.
 
