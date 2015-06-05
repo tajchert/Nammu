@@ -31,7 +31,7 @@ After that each time you want to make sure if permissions are still there - `Nam
 As library monitors your Permissions at any point of time (just call `init()`) you can get list of monitored Persmissions -`Nammu.getPrevPermissions()`, removed some `Nammu.removePermission(PermissionString)`, or check if is monitored `Nammu.containsPermission(PermissionString)`.
 
 ###How to import it?
-As for now it is NOT hosted at Maven/JCenter etc. as it is based on preview build of Android M which SDK is not available on those platforms. Till that time, it is available on jitpack.io by adding this to your build.gradle:
+As for now it is not hosted at Maven/JCenter etc. as it is based on preview build of Android M which SDK is not available on those platforms. Till that time, it is available on jitpack.io by adding this to your build.gradle:
 
 ```groovy
 repositories {
@@ -41,8 +41,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:Nammu:<VERSION>'
+    compile 'com.github.tajchert:nammu:0.2.0'
 }
 ```
-
-*The current version is `0.1.0`*
+Kudos to Jitpack.io for installing M preview SDK for us([link](https://github.com/tajchert/Nammu/pull/1))!
