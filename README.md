@@ -55,4 +55,4 @@ dependencies {
 Kudos to Jitpack.io for installing M preview SDK for us([link](https://github.com/tajchert/Nammu/pull/1))!
 
 ###TODO
-Camera permission can be currently check only with Activity instance (official API) - #2 issue.
+Camera permission can be currently check only with Activity instance (official API) - #3 issue.
