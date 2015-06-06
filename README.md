@@ -1,7 +1,7 @@
 Nammu - Runtime Permission Helper
 =======
 
-Nammu is a simple library to speed up working with new Runtime Permissions introduced in Android M. It allows you to easily ask for a permission, as well as to monitor if all permission that you haved ask are still there, if not it will callback with name of permission that was revoke by user.
+Speed up your work with new Runtime Permissions introduced in Android M. This lib allows you to easily monitor permissions, check them in background and as well ask for a permission in more easy way. All those nice things that aren't included in new Runtime Permission API.
 
 ###What are Runtime Permissions?
 Google docs is [here](https://developer.android.com/preview/features/runtime-permissions.html).
