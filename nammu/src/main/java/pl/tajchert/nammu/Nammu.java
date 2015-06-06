@@ -4,7 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.location.Criteria;
+import android.location.LocationManager;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.CalendarContract;
+import android.provider.ContactsContract;
+import android.telephony.TelephonyManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +26,8 @@ import java.util.Set;
  * Created by Michal Tajchert on 2015-06-04.
  */
 public class Nammu {
+    private static final String TAG = Nammu.class.getSimpleName();
+    private static Context context;
     private static SharedPreferences sharedPreferences;
     private static final String KEY_PREV_PERMISSIONS = "previous_permissions";
     private static ArrayList<PermissionRequest> permissionRequests = new ArrayList<PermissionRequest>();
@@ -215,5 +228,136 @@ public class Nammu {
                 removePermission(permission);
             }
         }
+    }
+
+    /**
+     * Check for android.permission-group.CALENDAR
+     * @param context
+     * @return
+     */
+    public static boolean checkCalendar(Context context) {
+        try {
+            Cursor cursor = context.getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, null, null, null, null);
+            cursor.close();
+        } catch (SecurityException e) {
+            //No android.permission-group.CALENDAR
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check for android.permission-group.CAMERA
+     * @return
+     */
+    public static boolean checkCamera() {
+        try {
+            Camera.open();
+        } catch (RuntimeException e) {
+            //No android.permission-group.CAMERA
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check for android.permission-group.CONTACTS
+     * @param context
+     * @return
+     */
+    public static boolean checkContacts(Context context) {
+        try {
+            Cursor cursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+            cursor.close();
+        } catch (SecurityException e) {
+            //No android.permission-group.CONTACTS
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check for android.permission-group.LOCATION
+     * @param context
+     * @return
+     */
+    public static boolean checkLocation(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        String bestProvider = locationManager.getBestProvider(criteria, false);
+        if (bestProvider == null) {
+            //No android.permission-group.LOCATION
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check for android.permission-group.MICROPHONE
+     * @return
+     */
+    public static boolean checkMicrophone() {
+        MediaRecorder mRecorder = new MediaRecorder();
+        try {
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        } catch (RuntimeException e) {
+            //No android.permission-group.MICROPHONE
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check for android.permission-group.PHONE
+     * @param context
+     * @return
+     */
+    public static boolean checkPhone(Context context) {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        try {
+            telephonyManager.getDeviceId();
+        } catch (SecurityException e) {
+            //No android.permission-group.PHONE
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check for android.permission-group.SENSORS
+     * @param context
+     * @return
+     */
+    public static boolean checkSensors(Context context) {
+        SensorManager mSensorManager = ((SensorManager)context.getSystemService(Context.SENSOR_SERVICE));
+        try {
+            Sensor sensor=  mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
+            if(sensor != null) {
+                sensor.getVendor();
+            } else {
+                //We don't have sensor so we cannot test if we have access to it or not
+            }
+        } catch (SecurityException e) {
+            //No android.permission-group.SENSORS
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check for android.permission-group.SMS
+     * @param context
+     * @return
+     */
+    public static boolean checkSms(Context context) {
+        try {
+            Cursor cursor = context.getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
+            cursor.close();
+        } catch (SecurityException e) {
+            //No android.permission-group.SMS
+            return false;
+        }
+        return true;
     }
 }

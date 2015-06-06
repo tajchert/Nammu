@@ -218,6 +218,15 @@ public class MainActivity extends FragmentActivity implements PermissionListener
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume calendar access: " + Nammu.checkCalendar(MainActivity.this));
+        Log.d(TAG, "onResume location access: " + Nammu.checkLocation(MainActivity.this));
+        Log.d(TAG, "onResume camera access: " + Nammu.checkCamera());
+        Log.d(TAG, "onResume contacts access: " + Nammu.checkContacts(MainActivity.this));
+        Log.d(TAG, "onResume microphone access: " + Nammu.checkMicrophone());
+        Log.d(TAG, "onResume phone access: " + Nammu.checkPhone(MainActivity.this));
+        Log.d(TAG, "onResume sensors access: " + Nammu.checkSensors(MainActivity.this));
+        Log.d(TAG, "onResume sms access: " + Nammu.checkSms(MainActivity.this));
+
         Nammu.permissionCompare(this, this);//We need to call this in Activity each time we want to check if any permission wasn't revoke
     }
 
