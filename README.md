@@ -29,7 +29,10 @@ To keep track of access to particular permissions, all you need is init Nammu `N
 
 After that each time you want to make sure if permissions are still there - `Nammu.permissionCompare(Activity, PermissionListener);` and PermissionListener will be called if some Permission was removed.
 
-###Easy check
+###Background check!
+Runtime Permissions API allows you to check for permission access only in Activity, with Nammu you can do it anywhere (Service, Widget etc.) as long as you provide Context. Also checking what was revoked since last check works - ` Nammu.permissionCompare(PermissionListener)` (just remember to call `Nammu.init(context)` before that).
+
+###Easy checking permissions
 Do you want to check status of some [android.permission-group](https://developer.android.com/preview/features/runtime-permissions.html#permission-groups)? Just use `Nammu.checkCamera()`, `Nammu.checkLocation(context)` and similar to do so.
 
 ###Extras
@@ -46,7 +49,10 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:nammu:0.3.0'
+    compile 'com.github.tajchert:nammu:0.4.0'
 }
 ```
 Kudos to Jitpack.io for installing M preview SDK for us([link](https://github.com/tajchert/Nammu/pull/1))!
+
+###TODO
+Camera permission can be currently check only with Activity instance (official API) - #2 issue.
