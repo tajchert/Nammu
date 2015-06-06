@@ -16,6 +16,7 @@ Current solution you can see here - [Google sample](https://github.com/googlesam
 ###Easy asking for permissions
 It removes a bit of boiler plate to keep request id, and thus simplify your code inside Activity class.
 call `Nammu.askForPermission(Activity, PermissionString , PermissionCallback)` which offers a nice callback with either succes or fail method. To use this only thing you need to add is in your Activity that you are using.
+
 ```java
 @Override
 public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -25,10 +26,14 @@ public void onRequestPermissionsResult(int requestCode, String[] permissions, in
 
 ###Monitor permissions
 To keep track of access to particular permissions, all you need is init Nammu `Nammu.init(Context);` (can be in Application class onCreate or Activity) and add permissions to monitor such `Nammu.savePermission(PermissionString);` so for example `Nammu.savePermission(Manifest.permission.CAMERA);`.
+
 After that each time you want to make sure if permissions are still there - `Nammu.permissionCompare(Activity, PermissionListener);` and PermissionListener will be called if some Permission was removed.
 
+###Easy check
+Do you want to check status of some [android.permission-group](https://developer.android.com/preview/features/runtime-permissions.html#permission-groups)? Just use `Nammu.checkCamera()`, `Nammu.checkLocation(context)` and similar to do so.
+
 ###Extras
-As library monitors your Permissions at any point of time (just call `init()`) you can get list of monitored Persmissions -`Nammu.getPrevPermissions()`, removed some `Nammu.removePermission(PermissionString)`, or check if is monitored `Nammu.containsPermission(PermissionString)`.
+You can get list of monitored Persmissions -`Nammu.getPrevPermissions()`, removed some `Nammu.removePermission(PermissionString)`, or check if is monitored `Nammu.containsPermission(PermissionString)`.
 
 ###How to import it?
 As for now it is not hosted at Maven/JCenter etc. as it is based on preview build of Android M which SDK is not available on those platforms. Till that time, it is available on jitpack.io by adding this to your build.gradle:
@@ -41,7 +46,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:nammu:0.2.0'
+    compile 'com.github.tajchert:nammu:0.3.0'
 }
 ```
 Kudos to Jitpack.io for installing M preview SDK for us([link](https://github.com/tajchert/Nammu/pull/1))!
