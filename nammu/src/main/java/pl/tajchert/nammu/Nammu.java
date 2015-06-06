@@ -16,6 +16,7 @@ import android.os.Build;
 import android.provider.CalendarContract;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ public class Nammu {
 
     public static void init(Context context) {
         sharedPreferences = context.getSharedPreferences("pl.tajchert.runtimepermissionhelper", Context.MODE_PRIVATE);
+        Nammu.context = context;
     }
 
     /**
@@ -78,7 +80,7 @@ public class Nammu {
         return true;
     }
 
-    public static boolean isMNC() {
+    private static boolean isMNC() {
         /*
          TODO: In the Android M Preview release, checking if the platform is M is done through
          the codename, not the version code. Once the API has been finalised, the following check
@@ -209,25 +211,97 @@ public class Nammu {
 
     /**
      * Used to trigger comparing process - @permissionListener will be called each time Permission was revoked
+     * Use when not in Activity as it uses manual check of permissions
+     * @param permissionListener
+     */
+    public static void permissionCompare(PermissionListener permissionListener) {
+        Nammu.permissionCompare(null, permissionListener);
+    }
+
+    /**
+     * Used to trigger comparing process - @permissionListener will be called each time Permission was revoked
      * @param activity
      * @param permissionListener
      */
     public static void permissionCompare(Activity activity, PermissionListener permissionListener) {
-        if(activity == null) {
-            return;
+        if(activity == null && context == null) {
+            throw new RuntimeException("Before comparing permissions you need to call Nammu.init(context)");
+
         }
         ArrayList<String> prevPermissions = getPrevPermissions();
         for(String permission : prevPermissions) {
-            if(activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
-                //is ok, we still have this permission
-            } else {
-                //We lost access to this permission, remove it from list of saved granted permissions and inform listener
-                if(permissionListener != null) {
-                    permissionListener.permissionsChanged(permission);
+            if(activity == null) {
+                //We do background check - for example from Service
+                boolean status = checkPermission(permission);
+                if(!status) {
+                    if (permissionListener != null) {
+                        permissionListener.permissionsChanged(permission);
+                    }
+                    removePermission(permission);
                 }
-                removePermission(permission);
+            } else {
+                //We do check on Activity instance (official API)
+                if (activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+                    //is ok, we still have this permission
+                } else {
+                    //We lost access to this permission, remove it from list of saved granted permissions and inform listener
+                    if (permissionListener != null) {
+                        permissionListener.permissionsChanged(permission);
+                    }
+                    removePermission(permission);
+                }
             }
         }
+    }
+
+    public static boolean checkPermission(String permissionName) {
+        if(context == null) {
+            throw new RuntimeException("Before comparing permissions you need to call Nammu.init(context)");
+        }
+        return checkPermissionSafe(permissionName);
+    }
+
+    private static boolean checkPermissionSafe(String permissionName) {
+        if(permissionName == null) {
+            return false;
+        }
+
+        if("android.permission.READ_CALENDAR".equals(permissionName)
+                || "android.permission.WRITE_CALENDAR".equals(permissionName)) {
+            return  checkCalendar(context);
+        } else if("android.permission.CAMERA".equals(permissionName)) {
+            throw new RuntimeException("Camera background check is yet not implemented, if you know solution " +
+                    "please do a pull request, if not please use method based on Activity instance to check permission");
+            //return checkCamera(context);
+        } else if("android.permission.READ_CONTACTS".equals(permissionName)
+                || "android.permission.WRITE_CONTACTS".equals(permissionName)
+                || "android.permission.READ_PROFILE".equals(permissionName)
+                || "android.permission.WRITE_PROFILE".equals(permissionName)) {
+            return checkContacts(context);
+        } else if("android.permission.ACCESS_FINE_LOCATION".equals(permissionName)
+                || "android.permission.ACCESS_COARSE_LOCATION".equals(permissionName)) {
+            return checkLocation(context);
+        } else if("android.permission.RECORD_AUDIO".equals(permissionName)) {
+            return checkMicrophone();
+        } else if("android.permission.READ_PHONE_STATE".equals(permissionName)
+                || "android.permission.CALL_PHONE".equals(permissionName)
+                || "android.permission.READ_CALL_LOG".equals(permissionName)
+                || "com.android.voicemail.permission.ADD_VOICEMAIL".equals(permissionName)
+                || "android.permission.USE_SIP".equals(permissionName)
+                || "android.permission.PROCESS_OUTGOING_CALLS".equals(permissionName)) {
+            return checkPhone(context);
+        } else if("android.permission.BODY_SENSORS".equals(permissionName)
+                || "android.permission.USE_FINGERPRINT".equals(permissionName)) {
+            return checkSensors(context);
+        } else if("android.permission.SEND_SMS".equals(permissionName)
+                || "android.permission.RECEIVE_SMS".equals(permissionName)
+                || "android.permission.READ_SMS".equals(permissionName)
+                || "android.permission.RECEIVE_WAP_PUSH".equals(permissionName)
+                || "android.permission.RECEIVE_MMS".equals(permissionName)
+                || "android.permission.READ_CELL_BROADCASTS".equals(permissionName)) {
+            return checkSms(context);
+        }
+        return false;
     }
 
     /**
@@ -250,13 +324,17 @@ public class Nammu {
      * Check for android.permission-group.CAMERA
      * @return
      */
-    public static boolean checkCamera() {
+    private static boolean checkCamera(Context context) {
         try {
-            Camera.open();
+            Camera camera = Camera.open();
+            //TODO call some method that requires Check for android.permission-group.CAMERA, and not Camera.open()
+            // as it result in crash in first run of other instance of Camera
+            // Maybe Camera2 API? I couldn't find any method that doesn't open camera view and requires permission at the same time
         } catch (RuntimeException e) {
-            //No android.permission-group.CAMERA
+            Log.e(TAG, "checkCamera error: " + e.getLocalizedMessage());
             return false;
         }
+
         return true;
     }
 

@@ -220,7 +220,6 @@ public class MainActivity extends FragmentActivity implements PermissionListener
         super.onResume();
         Log.d(TAG, "onResume calendar access: " + Nammu.checkCalendar(MainActivity.this));
         Log.d(TAG, "onResume location access: " + Nammu.checkLocation(MainActivity.this));
-        Log.d(TAG, "onResume camera access: " + Nammu.checkCamera());
         Log.d(TAG, "onResume contacts access: " + Nammu.checkContacts(MainActivity.this));
         Log.d(TAG, "onResume microphone access: " + Nammu.checkMicrophone());
         Log.d(TAG, "onResume phone access: " + Nammu.checkPhone(MainActivity.this));
