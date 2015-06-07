@@ -218,15 +218,15 @@ public class MainActivity extends FragmentActivity implements PermissionListener
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume calendar access: " + Nammu.checkCalendar(MainActivity.this));
-        Log.d(TAG, "onResume location access: " + Nammu.checkLocation(MainActivity.this));
-        Log.d(TAG, "onResume contacts access: " + Nammu.checkContacts(MainActivity.this));
-        Log.d(TAG, "onResume microphone access: " + Nammu.checkMicrophone());
-        Log.d(TAG, "onResume phone access: " + Nammu.checkPhone(MainActivity.this));
-        Log.d(TAG, "onResume sensors access: " + Nammu.checkSensors(MainActivity.this));
-        Log.d(TAG, "onResume sms access: " + Nammu.checkSms(MainActivity.this));
+        Log.d(TAG, "onResume calendar access: " + Nammu.checkPermission(Manifest.permission.READ_CALENDAR));
+        Log.d(TAG, "onResume location access: " + Nammu.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION));
+        Log.d(TAG, "onResume contacts access: " + Nammu.checkPermission(Manifest.permission.READ_CONTACTS));
+        Log.d(TAG, "onResume microphone access: " + Nammu.checkPermission(Manifest.permission.RECORD_AUDIO));
+        Log.d(TAG, "onResume phone access: " + Nammu.checkPermission(Manifest.permission.READ_PHONE_STATE));
+        Log.d(TAG, "onResume sensors access: " + Nammu.checkPermission(Manifest.permission.BODY_SENSORS));
+        Log.d(TAG, "onResume sms access: " + Nammu.checkPermission(Manifest.permission.READ_SMS));
 
-        Nammu.permissionCompare(this, this);//We need to call this in Activity each time we want to check if any permission wasn't revoke
+        Nammu.permissionCompare(this);//We need to call this in Activity each time we want to check if any permission wasn't revoke
     }
 
     /**

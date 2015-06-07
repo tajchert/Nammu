@@ -27,13 +27,7 @@ public void onRequestPermissionsResult(int requestCode, String[] permissions, in
 ###Monitor permissions
 To keep track of access to particular permissions, all you need is init Nammu `Nammu.init(Context);` (can be in Application class onCreate or Activity) and add permissions to monitor such `Nammu.savePermission(PermissionString);` so for example `Nammu.savePermission(Manifest.permission.CAMERA);`.
 
-After that each time you want to make sure if permissions are still there - `Nammu.permissionCompare(Activity, PermissionListener);` and PermissionListener will be called if some Permission was removed.
-
-###Background check!
-Runtime Permissions API allows you to check for permission access only in Activity, with Nammu you can do it anywhere (Service, Widget etc.) as long as you provide Context. Also checking what was revoked since last check works - ` Nammu.permissionCompare(PermissionListener)` (just remember to call `Nammu.init(context)` before that).
-
-###Easy checking permissions
-Do you want to check status of some [android.permission-group](https://developer.android.com/preview/features/runtime-permissions.html#permission-groups)? Just use `Nammu.checkCamera()`, `Nammu.checkLocation(context)` and similar to do so.
+After that each time you want to make sure if permissions are still there - `Nammu.permissionCompare(PermissionListener);` and PermissionListener will be called if some Permission was removed.
 
 ###Extras
 You can get list of monitored Persmissions -`Nammu.getPrevPermissions()`, removed some `Nammu.removePermission(PermissionString)`, or check if is monitored `Nammu.containsPermission(PermissionString)`.
@@ -49,10 +43,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:nammu:0.4.0'
+    compile 'com.github.tajchert:nammu:0.4.5'
 }
 ```
 Kudos to Jitpack.io for installing M preview SDK for us([link](https://github.com/tajchert/Nammu/pull/1))!
-
-###TODO
-Camera permission can be currently check only with Activity instance (official API) - #3 issue.
