@@ -1,7 +1,7 @@
 Nammu - Runtime Permission Helper
 =======
 
-Speed up your work with new Runtime Permissions introduced in Android M. This lib allows you to monitor permissions, check them in background and as well ask for a permission in more easy way. All those nice things that aren't included in new Runtime Permission API.
+Speed up your work with new Runtime Permissions introduced in Android M. This lib allows you to monitor permissions, check them in background and as well ask for a permission in easy way.
 
 ###What are Runtime Permissions?
 Google docs is [here](https://developer.android.com/preview/features/runtime-permissions.html).
