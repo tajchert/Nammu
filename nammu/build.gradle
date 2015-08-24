@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 'android-MNC'
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.0"
 
     defaultConfig {
-        minSdkVersion 'MNC'
-        targetSdkVersion 'MNC'
-        versionCode 1
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 2
         versionName "1.0"
     }
     buildTypes {

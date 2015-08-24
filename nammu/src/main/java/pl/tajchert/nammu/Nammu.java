@@ -1,5 +1,6 @@
 package pl.tajchert.nammu;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ public class Nammu {
     private static Context context;
     private static SharedPreferences sharedPreferences;
     private static final String KEY_PREV_PERMISSIONS = "previous_permissions";
+    private static final String KEY_IGNORED_PERMISSIONS = "ignored_permissions";
     private static ArrayList<PermissionRequest> permissionRequests = new ArrayList<PermissionRequest>();
 
     public static void init(Context context) {
@@ -40,26 +42,16 @@ public class Nammu {
     }
 
     /**
-     * Returns true if the Activity has access to all given permissions.
-     * Always returns true on platforms below M.
+     * Returns true if the Activity has access to given permissions.
      */
     public static boolean hasPermission(Activity activity, String permission) {
-        if (!isMNC()) {
-            return true;
-        }
-
         return activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
-     * Returns true if the Activity has access to a given permission.
-     * Always returns true on platforms below M.
+     * Returns true if the Activity has access to a all given permission.
      */
     public static boolean hasPermission(Activity activity, String[] permissions) {
-        if (!isMNC()) {
-            return true;
-        }
-
         for (String permission : permissions) {
             if (activity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
@@ -68,14 +60,12 @@ public class Nammu {
         return true;
     }
 
-    private static boolean isMNC() {
-        /*
-         TODO: In the Android M Preview release, checking if the platform is M is done through
-         the codename, not the version code. Once the API has been finalised, the following check
-         should be used: */
-        // return Build.VERSION.SDK_INT == Build.VERSION_CODES.MNC
-
-        return "MNC".equals(Build.VERSION.CODENAME);
+    /*
+     * If we override other methods, lets do it as well, and keep name same as it is already weird enough.
+     * Returns true if we should show explanation why we need this permission.
+     */
+    public static boolean shouldShowRequestPermissionRationale(Activity activity, String permissions) {
+        return activity.shouldShowRequestPermissionRationale(permissions);
     }
 
     public static void askForPermission(Activity activity, String permission, PermissionCallback permissionCallback) {
@@ -109,117 +99,178 @@ public class Nammu {
             }
             permissionRequests.remove(requestResult);
         }
+        refreshMonitoredList();
     }
 
 
-    //Listening part
+    //Permission monitoring part below
 
     /**
-     * Save permission when we got granted it - for later use to detect when it will got revoke
-     * @param permissions
+     * Get list of currently granted permissions, without saving it inside Nammu
+     * @return currently granted permissions
      */
-    public static void savePermission(String[] permissions) {
-        if(permissions == null) {
-            return;
+    public static ArrayList<String> getGrantedPermissions() {
+        if(context == null) {
+            throw new RuntimeException("Must call init() earlier");
         }
+        ArrayList<String> permissions = new ArrayList<String>();
+        ArrayList<String> permissionsGranted = new ArrayList<String>();
+        //Group location
+        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        //Group Calendar
+        permissions.add(Manifest.permission.WRITE_CALENDAR);
+        permissions.add(Manifest.permission.READ_CALENDAR);
+        //Group Camera
+        permissions.add(Manifest.permission.CAMERA);
+        //Group Contacts
+        permissions.add(Manifest.permission.WRITE_CONTACTS);
+        permissions.add(Manifest.permission.READ_CONTACTS);
+        permissions.add(Manifest.permission.GET_ACCOUNTS);
+        //Group Microphone
+        permissions.add(Manifest.permission.RECORD_AUDIO);
+        //Group Phone
+        permissions.add(Manifest.permission.CALL_PHONE);
+        permissions.add(Manifest.permission.READ_PHONE_STATE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            permissions.add(Manifest.permission.READ_CALL_LOG);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            permissions.add(Manifest.permission.WRITE_CALL_LOG);
+        }
+        permissions.add(Manifest.permission.ADD_VOICEMAIL);
+        permissions.add(Manifest.permission.USE_SIP);
+        permissions.add(Manifest.permission.PROCESS_OUTGOING_CALLS);
+        //Group Body sensors
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            permissions.add(Manifest.permission.BODY_SENSORS);
+        }
+        //Group SMS
+        permissions.add(Manifest.permission.SEND_SMS);
+        permissions.add(Manifest.permission.READ_SMS);
+        permissions.add(Manifest.permission.RECEIVE_SMS);
+        permissions.add(Manifest.permission.RECEIVE_WAP_PUSH);
+        permissions.add(Manifest.permission.RECEIVE_MMS);
+        //Group Storage
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        for(String permission : permissions) {
+            if(context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+                permissionsGranted.add(permission);
+            }
+        }
+        return permissionsGranted;
+    }
+
+    /**
+     * Refresh currently granted permission list, and save it for later comparing using @permissionCompare()
+     */
+    public static void refreshMonitoredList() {
+        ArrayList<String> permissions = getGrantedPermissions();
         Set<String> set = new HashSet<String>();
         for(String perm : permissions) {
             set.add(perm);
         }
-        set.addAll(getPrevPermissions());
         sharedPreferences.edit().putStringSet(KEY_PREV_PERMISSIONS, set).apply();
     }
 
     /**
-     * Save permission when we got granted it - for later use to detect when it will got revoke
-     * @param permissions
+     * Get list of previous Permissions, from last refreshMonitoredList() call and they may be outdated,
+     * use getGrantedPermissions() to get current
      */
-    public static void savePermission(ArrayList<String> permissions) {
-        if(permissions == null) {
-            return;
-        }
-        Set<String> set = new HashSet<String>();
-        set.addAll(permissions);
-        set.addAll(getPrevPermissions());
-        sharedPreferences.edit().putStringSet(KEY_PREV_PERMISSIONS, set).apply();
-    }
-
-    /**
-     * Save permission when we got granted it - for later use to detect when it will got revoke
-     * @param permission
-     */
-    public static void savePermission(String permission) {
-        if(permission == null) {
-            return;
-        }
-        Set<String> set = new HashSet<String>();
-        set.add(permission);
-        set.addAll(getPrevPermissions());
-        sharedPreferences.edit().putStringSet(KEY_PREV_PERMISSIONS, set).apply();
-    }
-
-    /**
-     * Get list of previous Permission that we are listening to, past tense as they are quite possible outdated (saved with savePermission())
-     * @return
-     */
-    public static ArrayList<String> getPrevPermissions() {
+    public static ArrayList<String> getPreviousPermissions() {
         ArrayList<String> prevPermissions = new ArrayList<String>();
         prevPermissions.addAll(sharedPreferences.getStringSet(KEY_PREV_PERMISSIONS, new HashSet<String>()));
         return prevPermissions;
     }
 
+    public static ArrayList<String> getIgnoredPermissions() {
+        ArrayList<String> ignoredPermissions = new ArrayList<String>();
+        ignoredPermissions.addAll(sharedPreferences.getStringSet(KEY_IGNORED_PERMISSIONS, new HashSet<String>()));
+        return ignoredPermissions;
+    }
+
     /**
-     * Check if we are subscribed to give Permission
-     * @param permission
-     * @return
+     * Lets see if we already ignore this permission
      */
-    public static boolean containsPermission(String permission) {
+    public static boolean isIgnoredPermission(String permission) {
         if(permission == null) {
             return false;
         }
-        if(getPrevPermissions().contains(permission)) {
+        if(getIgnoredPermissions().contains(permission)) {
             return true;
         }
         return false;
     }
 
     /**
-     * Use to unsubscribe to particular Permission
-     * @param permission
+     * Use to ignore to particular Permission - even if user will deny or add it we won't receive a callback.
+     * @param permission Permission to ignore
      */
-    public static void removePermission(String permission) {
-        if(containsPermission(permission)) {
-            ArrayList<String> prevPermissions = getPrevPermissions();
-            prevPermissions.remove(permission);
+    public static void ignorePermission(String permission) {
+        if(!isIgnoredPermission(permission)) {
+            ArrayList<String> ignoredPermissions = getIgnoredPermissions();
+            ignoredPermissions.add(permission);
             Set<String> set = new HashSet<String>();
-            set.addAll(prevPermissions);
-            sharedPreferences.edit().putStringSet(KEY_PREV_PERMISSIONS, set).apply();
+            set.addAll(ignoredPermissions);
+            sharedPreferences.edit().putStringSet(KEY_IGNORED_PERMISSIONS, set).apply();
         }
     }
 
     /**
-     * Used to trigger comparing process - @permissionListener will be called each time Permission was revoked
-     * @param permissionListener
+     * Used to trigger comparing process - @permissionListener will be called each time Permission was revoked, or added (but only once).
+     * @param permissionListener Callback that handles all permission changes
      */
     public static void permissionCompare(PermissionListener permissionListener) {
         if(context == null) {
             throw new RuntimeException("Before comparing permissions you need to call Nammu.init(context)");
 
         }
-        ArrayList<String> prevPermissions = getPrevPermissions();
-        for(String permission : prevPermissions) {
-            if (context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
-                //is ok, we still have this permission
-            } else {
-                //We lost access to this permission, remove it from list of saved granted permissions and inform listener
-                if (permissionListener != null) {
-                    permissionListener.permissionsChanged(permission);
+        ArrayList<String> previouslyGranted = getPreviousPermissions();
+        ArrayList<String> currentPermissions = getGrantedPermissions();
+        ArrayList<String> ignoredPermissions = getIgnoredPermissions();
+        for(String permission : ignoredPermissions) {
+            if(previouslyGranted != null && !previouslyGranted.isEmpty()) {
+                if (previouslyGranted.contains(permission)) {
+                    previouslyGranted.remove(permission);
                 }
-                removePermission(permission);
+            }
+
+            if(currentPermissions != null && !currentPermissions.isEmpty()) {
+                if (currentPermissions.contains(permission)) {
+                    currentPermissions.remove(permission);
+                }
             }
         }
+        for(String permission : currentPermissions) {
+            if(previouslyGranted.contains(permission)) {
+                //All is fine, was granted and still is
+                previouslyGranted.remove(permission);
+            } else {
+                //We didn't have it last time
+                if (permissionListener != null) {
+                    permissionListener.permissionsChanged(permission);
+                    permissionListener.permissionsGranted(permission);
+                }
+            }
+        }
+        if(previouslyGranted != null && !previouslyGranted.isEmpty()) {
+            //Something was granted and removed
+            for(String permission : previouslyGranted) {
+                if (permissionListener != null) {
+                    permissionListener.permissionsChanged(permission);
+                    permissionListener.permissionsRemoved(permission);
+                }
+            }
+        }
+        refreshMonitoredList();
     }
 
+    /**
+     * Not that needed method but if we override others it is good to keep same.
+     */
     public static boolean checkPermission(String permissionName) {
         if(context == null) {
             throw new RuntimeException("Before comparing permissions you need to call Nammu.init(context)");

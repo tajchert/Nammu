@@ -17,226 +17,150 @@
 package pl.tajchert.nammusample;
 
 import android.Manifest;
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
-import android.widget.ViewAnimator;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import pl.tajchert.nammu.Nammu;
 import pl.tajchert.nammu.PermissionCallback;
 import pl.tajchert.nammu.PermissionListener;
-import pl.tajchert.nammusample.camera.CameraPreviewFragment;
-import pl.tajchert.nammusample.contacts.ContactsFragment;
 
-/**
- * Launcher Activity that demonstrates the use of runtime permissions for Android M.
- * It contains a summary sample description, sample log and a Fragment that calls callbacks on this
- * Activity to illustrate parts of the runtime permissions API.
- * <p>
- * This Activity requests permissions to access the camera ({@link Manifest.permission#CAMERA})
- * when the 'Show Camera' button is clicked to display the camera preview.
- * Contacts permissions (({@link Manifest.permission#READ_CONTACTS} and ({@link
- * Manifest.permission#WRITE_CONTACTS})) are requested when the 'Show and Add Contacts'
- * button is
- * clicked to display the first contact in the contacts database and to add a dummy contact
- * directly
- * to it. First, permissions are checked if they have already been granted through {@link
- * Activity#checkSelfPermission(String)} (wrapped in {@link
- * PermissionUtil#hasSelfPermission(Activity, String)} and {@link PermissionUtil#hasSelfPermission(Activity,
- * String[])} for compatibility). If permissions have not been granted, they are requested through
- * {@link Activity#requestPermissions(String[], int)} and the return value checked in {@link
- * Activity#onRequestPermissionsResult(int, String[], int[])}.
- * <p>
- * If this sample is executed on a device running a platform version below M, all permissions
- * declared
- * in the Android manifest file are always granted at install time and cannot be requested at run
- * time.
- * <p>
- * This sample targets the M platform and must therefore request permissions at runtime. Change the
- * targetSdk in the file 'Application/build.gradle' to 22 to run the application in compatibility
- * mode.
- * Now, if a permission has been disable by the system through the application settings, disabled
- * APIs provide compatibility data.
- * For example the camera cannot be opened or an empty list of contacts is returned. No special
- * action is required in this case.
- * <p>
- * (This class is based on the MainActivity used in the SimpleFragment sample template.)
- */
-public class MainActivity extends FragmentActivity implements PermissionListener {
-    public static final String TAG = "MainActivity";
-    /**
-     * Permissions required to read and write contacts. Used by the {@link ContactsFragment}.
-     */
-    private static String[] PERMISSIONS_CONTACT = {Manifest.permission.READ_CONTACTS,
-            Manifest.permission.WRITE_CONTACTS};
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int REQUEST_CODE_CONTACTS = 123;
+    private static final int REQUEST_CODE_LOCATION = 124;
+    private static final int REQUEST_CODE_BOTH = 125;
 
-    // Whether the Log Fragment is currently shown.
-    private boolean mLogShown;
-
+    @Bind(R.id.main_layout)
+    View mLayout;
 
     /**
-     * Called when the 'show camera' button is clicked.
-     * Callback is defined in resource layout definition.
+     * Used to handle result of askForPermission for Contacts Permission, in better way than onRequestPermissionsResult() and handling with big switch statement
      */
-    public void showCamera(View view) {
-        Log.i(TAG, "Show camera button pressed. Checking permission.");
-        // BEGIN_INCLUDE(camera_permission)
-        // Check if the Camera permission is already available.
-        Nammu.askForPermission(this, Manifest.permission.CAMERA, new PermissionCallback() {
-            @Override
-            public void permissionGranted() {
-                showCameraPreview();
-                Nammu.savePermission(Manifest.permission.CAMERA);
-                Toast.makeText(MainActivity.this, R.string.permision_available_camera, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void permissionRefused() {
-                Toast.makeText(MainActivity.this, R.string.permissions_not_granted, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
-    /**
-     * Called when the 'show camera' button is clicked.
-     * Callback is defined in resource layout definition.
-     */
-    public void showContacts(View v) {
-        Log.i(TAG, "Show contacts button pressed. Checking permissions.");
-        // Verify that all required contact permissions have been granted.
-        Nammu.askForPermission(this, PERMISSIONS_CONTACT, new PermissionCallback() {
-            @Override
-            public void permissionGranted() {
-                showContactDetails();
-                Nammu.savePermission(PERMISSIONS_CONTACT);
-                Toast.makeText(MainActivity.this, R.string.permision_available_contacts, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void permissionRefused() {
-                Toast.makeText(MainActivity.this, R.string.permissions_not_granted, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    /**
-     * Display the {@link CameraPreviewFragment} in the content area if the required Camera
-     * permission has been granted.
-     */
-    private void showCameraPreview() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.sample_content_fragment, CameraPreviewFragment.newInstance())
-                .addToBackStack("contacts")
-                .commitAllowingStateLoss();
-    }
-
-    /**
-     * Display the {@link ContactsFragment} in the content area if the required contacts
-     * permissions
-     * have been granted.
-     */
-    private void showContactDetails() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.sample_content_fragment, ContactsFragment.newInstance())
-                .addToBackStack("contacts")
-                .commitAllowingStateLoss();
-    }
-
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Nammu.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    /* Note: Methods and definitions below are only used to provide the UI for this sample and are
-    not relevant for the execution of the runtime permissions API. */
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem logToggle = menu.findItem(R.id.menu_toggle_log);
-        logToggle.setVisible(findViewById(R.id.sample_output) instanceof ViewAnimator);
-        logToggle.setTitle(mLogShown ? R.string.sample_hide_log : R.string.sample_show_log);
-
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_toggle_log:
-                mLogShown = !mLogShown;
-                ViewAnimator output = (ViewAnimator) findViewById(R.id.sample_output);
-                if (mLogShown) {
-                    output.setDisplayedChild(1);
-                } else {
-                    output.setDisplayedChild(0);
-                }
-                supportInvalidateOptionsMenu();
-                return true;
+    final PermissionCallback permissionContactsCallback = new PermissionCallback() {
+        @Override
+        public void permissionGranted() {
+            boolean hasAccess = Tools.accessContacts(MainActivity.this);
+            Toast.makeText(MainActivity.this, "Access granted = " + hasAccess, Toast.LENGTH_SHORT).show();
         }
-        return super.onOptionsItemSelected(item);
-    }
 
+        @Override
+        public void permissionRefused() {
+            boolean hasAccess = Tools.accessContacts(MainActivity.this);
+            Toast.makeText(MainActivity.this, "Access granted = " + hasAccess, Toast.LENGTH_SHORT).show();
+        }
+    };
 
-    public void onBackClick(View view) {
-        getSupportFragmentManager().popBackStack();
-    }
+    /**
+     * Used to handle result of askForPermission for Location, in better way than onRequestPermissionsResult() and handling with big switch statement
+     */
+    final PermissionCallback permissionLocationCallback = new PermissionCallback() {
+        @Override
+        public void permissionGranted() {
+            boolean hasAccess = Tools.accessLocation(MainActivity.this);
+            Toast.makeText(MainActivity.this, "Access granted = " + hasAccess, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void permissionRefused() {
+            boolean hasAccess = Tools.accessLocation(MainActivity.this);
+            Toast.makeText(MainActivity.this, "Access granted = " + hasAccess, Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //We can init here or onCreate in Application class
-        Nammu.init(MainActivity.this);
-
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            RuntimePermissionsFragment fragment = new RuntimePermissionsFragment();
-            transaction.replace(R.id.sample_content_fragment, fragment);
-            transaction.commit();
-        }
+        ButterKnife.bind(this);
+        Nammu.init(getApplicationContext());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume calendar access: " + Nammu.checkPermission(Manifest.permission.READ_CALENDAR));
-        Log.d(TAG, "onResume location access: " + Nammu.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION));
-        Log.d(TAG, "onResume contacts access: " + Nammu.checkPermission(Manifest.permission.READ_CONTACTS));
-        Log.d(TAG, "onResume microphone access: " + Nammu.checkPermission(Manifest.permission.RECORD_AUDIO));
-        Log.d(TAG, "onResume phone access: " + Nammu.checkPermission(Manifest.permission.READ_PHONE_STATE));
-        Log.d(TAG, "onResume sensors access: " + Nammu.checkPermission(Manifest.permission.BODY_SENSORS));
-        Log.d(TAG, "onResume sms access: " + Nammu.checkPermission(Manifest.permission.READ_SMS));
+        Nammu.permissionCompare(new PermissionListener() {
+            @Override
+            public void permissionsChanged(String permissionRevoke) {
+                //Toast is not needed as always either permissionsGranted() or permissionsRemoved() will be called
+                //Toast.makeText(MainActivity.this, "Access revoked = " + permissionRevoke, Toast.LENGTH_SHORT).show();
+            }
 
-        Nammu.permissionCompare(this);//We need to call this in Activity each time we want to check if any permission wasn't revoke
+            @Override
+            public void permissionsGranted(String permissionGranted) {
+                Toast.makeText(MainActivity.this, "Access granted = " + permissionGranted, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void permissionsRemoved(String permissionRemoved) {
+                Toast.makeText(MainActivity.this, "Access removed = " + permissionRemoved, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    /**
-     * Called each time user revokes some permission that we have saved earlier on using PermissionHelper.savePermission()
-     * Called as a result of Nammu.permissionCompare()
-     * @param permissionRevoke
-     */
+
+    @OnClick(R.id.buttonContacts)
+    public void clickButtContacts() {
+        //Lets see if we can access Contacts
+        if(Nammu.checkPermission(Manifest.permission.READ_CONTACTS)) {
+            //We have a permission, easy peasy
+            boolean hasAccess = Tools.accessContacts(this);
+            Toast.makeText(this, "Access granted = " + hasAccess, Toast.LENGTH_SHORT).show();
+        } else {
+            //We do not own this permission
+            if (Nammu.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)) {
+                //User already refused to give us this permission or removed it
+                //Now he/she can mark "never ask again" (sic!)
+                Snackbar.make(mLayout, "Here we explain user why we need to know his/her contacts.",
+                        Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Nammu.askForPermission(MainActivity.this, Manifest.permission.READ_CONTACTS, permissionContactsCallback);
+                            }
+                        }).show();
+            } else {
+                //First time asking for permission
+                // or phone doesn't offer permission
+                // or user marked "never ask again"
+                Nammu.askForPermission(this, Manifest.permission.READ_CONTACTS, permissionContactsCallback);
+            }
+        }
+    }
+
+    @OnClick(R.id.buttonLocation)
+    public void clickButtLocation() {
+        if(Nammu.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            boolean hasAccess = Tools.accessLocation(this);
+            Toast.makeText(this, "Access granted fine= " + hasAccess, Toast.LENGTH_SHORT).show();
+        } else {
+            if (Nammu.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                //User already refused to give us this permission or removed it
+                //Now he/she can mark "never ask again" (sic!)
+                Snackbar.make(mLayout, "Here we explain user why we need to know his/her location.",
+                        Snackbar.LENGTH_INDEFINITE)
+                        .setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Nammu.askForPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION, permissionLocationCallback);
+                            }
+                        }).show();
+            } else {
+                //First time asking for permission
+                // or phone doesn't offer permission
+                // or user marked "never ask again"
+                Nammu.askForPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION, permissionLocationCallback);
+            }
+        }
+    }
+
     @Override
-    public void permissionsChanged(String permissionRevoke) {
-        Log.d(TAG, "permissions revoked by user :" + permissionRevoke);
-        Toast.makeText(MainActivity.this, "Revoked: " + permissionRevoke, Toast.LENGTH_SHORT).show();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Nammu.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
