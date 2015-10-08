@@ -16,7 +16,7 @@ import java.util.Set;
  * Created by Michal Tajchert on 2015-06-04.
  */
 public class Nammu {
-    private static final String TAG = Nammu.class.getSimpleName();
+       private static final String TAG = Nammu.class.getSimpleName();
     private static Context context;
     private static SharedPreferences sharedPreferences;
     private static final String KEY_PREV_PERMISSIONS = "previous_permissions";
@@ -45,7 +45,7 @@ public class Nammu {
      * Returns true if the Activity has access to given permissions.
      */
     public static boolean hasPermission(Activity activity, String permission) {
-        return activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(activity,permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
@@ -53,7 +53,7 @@ public class Nammu {
      */
     public static boolean hasPermission(Activity activity, String[] permissions) {
         for (String permission : permissions) {
-            if (activity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(activity,permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
@@ -65,7 +65,7 @@ public class Nammu {
      * Returns true if we should show explanation why we need this permission.
      */
     public static boolean shouldShowRequestPermissionRationale(Activity activity, String permissions) {
-        return activity.shouldShowRequestPermissionRationale(permissions);
+        return ActivityCompat.shouldShowRequestPermissionRationale(activity,permissions);
     }
 
     public static void askForPermission(Activity activity, String permission, PermissionCallback permissionCallback) {
@@ -83,7 +83,7 @@ public class Nammu {
         PermissionRequest permissionRequest = new PermissionRequest(new ArrayList<String>(Arrays.asList(permissions)), permissionCallback);
         permissionRequests.add(permissionRequest);
 
-        activity.requestPermissions(permissions, permissionRequest.getRequestCode());
+        ActivityCompat.requestPermissions(activity,permissions, permissionRequest.getRequestCode());
     }
 
     public static void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -157,7 +157,7 @@ public class Nammu {
         }
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         for(String permission : permissions) {
-            if(context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+            if(ContextCompat.checkSelfPermission(context,permission) == PackageManager.PERMISSION_GRANTED) {
                 permissionsGranted.add(permission);
             }
         }
@@ -275,6 +275,6 @@ public class Nammu {
         if(context == null) {
             throw new RuntimeException("Before comparing permissions you need to call Nammu.init(context)");
         }
-        return PackageManager.PERMISSION_GRANTED == context.checkSelfPermission(permissionName);
+        return PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(context,permissionName);
     }
 }
