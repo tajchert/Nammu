@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:nammu:1.1.0'
+    compile 'com.github.tajchert:nammu:1.1.1'
 }
 ```
 Kudos to Jitpack.io for installing M preview SDK for us([link](https://github.com/tajchert/Nammu/pull/1))!

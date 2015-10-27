@@ -22,7 +22,7 @@ public class PermissionRequest {
         if(random == null) {
             random = new Random();
         }
-        this.requestCode = random.nextInt(32768);
+        this.requestCode = random.nextInt(255);
     }
 
     public ArrayList<String> getPermissions() {
