@@ -68,6 +68,17 @@ public class Nammu {
         return activity.shouldShowRequestPermissionRationale(permissions);
     }
 
+    public static boolean shouldShowRequestPermissionRationale(Activity activity, String[] permissions) {
+        boolean show = false;
+        for (String permission : permissions) {
+            show = shouldShowRequestPermissionRationale(activity, permission);
+            if (show) {
+                break;
+            }
+        }
+        return show;
+    }
+
     public static void askForPermission(Activity activity, String permission, PermissionCallback permissionCallback) {
         askForPermission(activity, new String[]{permission}, permissionCallback);
     }
