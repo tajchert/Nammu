@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
@@ -70,6 +71,10 @@ public class Nammu {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, permissions);
     }
 
+    public static boolean shouldShowRequestPermissionRationale(Fragment fragment, String permissions) {
+        return fragment.shouldShowRequestPermissionRationale(permissions);
+    }
+
     public static void askForPermission(Activity activity, String permission, PermissionCallback permissionCallback) {
         askForPermission(activity, new String[]{permission}, permissionCallback);
     }
@@ -86,6 +91,24 @@ public class Nammu {
         permissionRequests.add(permissionRequest);
 
         ActivityCompat.requestPermissions(activity, permissions, permissionRequest.getRequestCode());
+    }
+
+    public static void askForPermission(Fragment fragment, String permission, PermissionCallback permissionCallback) {
+        askForPermission(fragment, new String[]{permission}, permissionCallback);
+    }
+
+    private static void askForPermission(Fragment fragment, String[] permissions, PermissionCallback permissionCallback) {
+        if (permissionCallback == null) {
+            return;
+        }
+        if (hasPermission(fragment.getActivity(), permissions)) {
+            permissionCallback.permissionGranted();
+            return;
+        }
+        PermissionRequest permissionRequest = new PermissionRequest(new ArrayList<String>(Arrays.asList(permissions)), permissionCallback);
+        permissionRequests.add(permissionRequest);
+
+        fragment.requestPermissions(permissions, permissionRequest.getRequestCode());
     }
 
     public static void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
