@@ -194,10 +194,7 @@ public class Nammu {
      */
     public static void refreshMonitoredList() {
         ArrayList<String> permissions = getGrantedPermissions();
-        Set<String> set = new HashSet<String>();
-        for(String perm : permissions) {
-            set.add(perm);
-        }
+        Set<String> set = new HashSet<String>(permissions);
         sharedPreferences.edit().putStringSet(KEY_PREV_PERMISSIONS, set).apply();
     }
 
