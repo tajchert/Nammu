@@ -4,11 +4,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
     }
 }
 
 apply plugin: 'com.android.library'
+//https://github.com/dcendents/android-maven-gradle-plugin
 apply plugin: 'com.github.dcendents.android-maven'
 
 android {
