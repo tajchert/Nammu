@@ -1,4 +1,4 @@
-package sixgreen.nammu;
+package pl.tajchert.nammu.support;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import pl.tajchert.nammu.BuildConfig;
 import pl.tajchert.nammu.Nammu;
 import pl.tajchert.nammu.PermissionCallback;
-import sixgreen.nammu.PermissionCallbackBuilder.PermissionCallbackHost;
+import pl.tajchert.nammu.support.PermissionCallbackBuilder.PermissionCallbackHost;
 
 public abstract class PermissionBaseActivity extends AppCompatActivity implements
 																	   OnPermissionRequestCallback,

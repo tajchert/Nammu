@@ -1,4 +1,4 @@
-package sixgreen.nammu;
+package pl.tajchert.nammu.support;
 
 import pl.tajchert.nammu.PermissionCallback;
 

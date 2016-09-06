@@ -1,4 +1,4 @@
-package sixgreen.nammu;
+package pl.tajchert.nammu.support;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,7 +7,7 @@ import android.support.v4.BuildConfig;
 import android.support.v4.app.Fragment;
 
 import pl.tajchert.nammu.PermissionCallback;
-import sixgreen.nammu.PermissionCallbackBuilder.PermissionCallbackHost;
+import pl.tajchert.nammu.support.PermissionCallbackBuilder.PermissionCallbackHost;
 
 /**
  * Created by bpappin on 2015-10-20.

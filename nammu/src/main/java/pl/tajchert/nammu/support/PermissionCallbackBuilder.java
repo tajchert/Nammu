@@ -1,4 +1,4 @@
-package sixgreen.nammu;
+package pl.tajchert.nammu.support;
 
 import android.content.Context;
 import android.content.DialogInterface;
