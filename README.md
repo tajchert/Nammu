@@ -14,7 +14,7 @@ Because your user can revoke most essential part of your app and quite probably 
 Current solution you can see here - [Google sample](https://github.com/googlesamples/android-RuntimePermissions) basically there is a lot that happens with Activity that is used to check and grant permissions. Also permissions rights are checked many times in the code.
 
 ###Monitor permissions
-To keep track of access to particular permissions, all you need is init Nammu `Nammu.init(Context);` (can be in Application class onCreate or Activity) and call `permissionCompare(PermissionListener)` to compare lists of granted permissions with previous method call. If you want only to update granted permission lists (without checking if anything changed) use `refreshMonitoredList()`. PermissionListener offers a callback when permissions was changed, removed, or added. It is recommended to do on app start to check if user didn't removed any permissions and open our app again.
+To keep track of access to particular permissions, all you need is init Nammu `Nammu.init(Context);` (pass Application Context, not Activity Context) and call `permissionCompare(PermissionListener)` to compare lists of granted permissions with previous method call. If you want only to update granted permission lists (without checking if anything changed) use `refreshMonitoredList()`. PermissionListener offers a callback when permissions was changed, removed, or added. It is recommended to do on app start to check if user didn't removed any permissions and open our app again.
 
 Also you can add Permission to ignored list to ignore its changes in access - use `ignorePermission(String permission)`.
 
