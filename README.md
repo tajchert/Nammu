@@ -2,10 +2,10 @@ Nammu - Runtime Permission Helper
 =======
 [![](https://jitpack.io/v/tajchert/Nammu.svg)](https://jitpack.io/#tajchert/Nammu)
 
-Speed up your work with new Runtime Permissions introduced in Android M. This lib allows you to monitor permissions, check them in background and as well ask for a permission in easy way (callback).
+Speed up your work with new Runtime Permissions introduced in Android 6.0 Marshmallow. This lib allows you to monitor permissions, check them in background and as well ask for a permission in easy way (callback).
 
 ###What are Runtime Permissions?
-Google docs is [here](https://developer.android.com/preview/features/runtime-permissions.html).
+Google docs is [here](https://developer.android.com/training/permissions/requesting.html).
 TLDR: like old-loved permissions that were ask during installation but this time they are more dynamic (should be ask only when they are needed) and can be revoked by user at any time.
 
 <img src="image/screenshot.png" width="400" height="672" alt="Source of all evil"/>
@@ -35,7 +35,7 @@ public void onRequestPermissionsResult(int requestCode, String[] permissions, in
 You can get list of monitored Permissions -`Nammu.getPrevPermissions()`, list of currently granted permissions - `getGrantedPermissions()`, and few less important.
 
 ###How to import it?
-As for now it is not hosted at Maven/JCenter etc. ~~as it is based on preview build of Android M which SDK is not available on those platforms~~ I will upload as soon as I will be sure that current version is stable. Till that time, it is available on jitpack.io by adding this to your build.gradle:
+It is available on jitpack.io by adding this to your build.gradle:
 
 ```groovy
 repositories {
@@ -48,4 +48,3 @@ dependencies {
     compile 'com.github.tajchert:nammu:1.1.2'
 }
 ```
-Kudos to Jitpack.io for installing M preview SDK for us([link](https://github.com/tajchert/Nammu/pull/1))!
