@@ -25,6 +25,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Get Location" />
+    <Button
+        android:id="@+id/buttonSpecialChangeSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Allow to change settings" />
 
     <Button
         android:id="@+id/buttonStartFragmentActivity"
