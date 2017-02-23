@@ -1,5 +1,6 @@
 Nammu - Runtime Permission Helper
 =======
+[![](https://jitpack.io/v/tajchert/Nammu.svg)](https://jitpack.io/#tajchert/Nammu)
 
 Speed up your work with new Runtime Permissions introduced in Android M. This lib allows you to monitor permissions, check them in background and as well ask for a permission in easy way (callback).
 
@@ -44,7 +45,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:nammu:1.1.1'
+    compile 'com.github.tajchert:nammu:1.1.2'
 }
 ```
 Kudos to Jitpack.io for installing M preview SDK for us([link](https://github.com/tajchert/Nammu/pull/1))!
