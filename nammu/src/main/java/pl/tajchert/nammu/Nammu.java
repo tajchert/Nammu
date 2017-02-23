@@ -25,7 +25,9 @@ public class Nammu {
     private static final String KEY_PREV_PERMISSIONS = "previous_permissions";
     private static final String KEY_IGNORED_PERMISSIONS = "ignored_permissions";
     private static ArrayList<PermissionRequest> permissionRequests = new ArrayList<PermissionRequest>();
-
+    public static final int SYSTEM_ALERT_WINDOW_PERMISSION_REQ_CODE = 1971;
+    public static final int WRITE_SETTINGS_PERMISSION_REQ_CODE = 1970;
+    
     public static void init(Context context) {
         sharedPreferences = context.getSharedPreferences("pl.tajchert.runtimepermissionhelper", Context.MODE_PRIVATE);
         Nammu.context = context;
@@ -91,6 +93,92 @@ public class Nammu {
         permissionRequests.add(permissionRequest);
 
         ActivityCompat.requestPermissions(activity, permissions, permissionRequest.getRequestCode());
+    }
+    
+     /**
+     *There are a couple of permissions that don't behave like normal and dangerous permissions. 
+     * SYSTEM_ALERT_WINDOW and WRITE_SETTINGS are particularly sensitive, so most apps should not use them. 
+     * If an app needs one of these permissions, it must declare the permission in the manifest, and send an intent requesting the user's authorization. 
+     * The system responds to the intent by showing a detailed management screen to the user.
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    @SuppressLint("ValidFragment")
+    public static void askForSpecialPermission(final AppCompatActivity activity,String permission, final PermissionCallback permissionCallback){
+        Fragment fragment;
+        FragmentTransaction fragmentTransaction;
+
+        if (permissionCallback == null) {
+            return;
+        }
+
+        switch (permission){
+            case Manifest.permission.SYSTEM_ALERT_WINDOW:
+                if (Settings.canDrawOverlays(activity)) {
+                    permissionCallback.permissionGranted();
+                    return;
+                }
+                 fragment = new Fragment() {
+                    @Override
+                    public void onAttach(Context context) {
+                        super.onAttach(context);
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:" + context.getPackageName()));
+                        startActivityForResult(intent, SYSTEM_ALERT_WINDOW_PERMISSION_REQ_CODE);
+                    }
+
+                    @Override
+                    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                        if (requestCode == SYSTEM_ALERT_WINDOW_PERMISSION_REQ_CODE) {
+                            if (Settings.canDrawOverlays(activity)) {
+                                permissionCallback.permissionGranted();
+                                getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+                            } else {
+                                permissionCallback.permissionRefused();
+                                getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+                            }
+                        }
+                        super.onActivityResult(requestCode, resultCode, data);
+                    }
+                };
+                fragmentTransaction = activity.getSupportFragmentManager()
+                        .beginTransaction();
+                fragmentTransaction.add(fragment, "getpermission");
+                fragmentTransaction.commit();
+                break;
+            case Manifest.permission.WRITE_SETTINGS:
+                if (Settings.System.canWrite(activity)) {
+                    permissionCallback.permissionGranted();
+                    return;
+                }
+                 fragment = new Fragment() {
+                    @Override
+                    public void onAttach(Context context) {
+                        super.onAttach(context);
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                                Uri.parse("package:" + context.getPackageName()));
+                        startActivityForResult(intent, WRITE_SETTINGS_PERMISSION_REQ_CODE);
+                    }
+
+                    @Override
+                    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                        if (requestCode == WRITE_SETTINGS_PERMISSION_REQ_CODE) {
+                            if (Settings.System.canWrite(activity)) {
+                                permissionCallback.permissionGranted();
+                                getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+                            } else {
+                                permissionCallback.permissionRefused();
+                                getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+                            }
+                        }
+                        super.onActivityResult(requestCode, resultCode, data);
+                    }
+                };
+                fragmentTransaction = activity.getSupportFragmentManager()
+                        .beginTransaction();
+                fragmentTransaction.add(fragment, "getpermission");
+                fragmentTransaction.commit();
+                break;
+        }
     }
 
     public static void askForPermission(Fragment fragment, String permission, PermissionCallback permissionCallback) {
@@ -298,5 +386,24 @@ public class Nammu {
             throw new RuntimeException("Before comparing permissions you need to call Nammu.init(context)");
         }
         return PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(context,permissionName);
+    }
+    /**
+     * Check for special permission. 
+     * @param permissionName: can be one of SYSTEM_ALERT_WINDOW or WRITE_SETTINGS
+     * @return permission status
+     */
+    public static boolean checkSpecialPermission(String permissionName){
+        if (context == null) {
+            throw new RuntimeException("Before comparing permissions you need to call PermissionManager.init(context)");
+        }
+
+        switch (permissionName){
+            case Manifest.permission.SYSTEM_ALERT_WINDOW:
+                return Settings.canDrawOverlays(context);
+            case Manifest.permission.WRITE_SETTINGS:
+                return Settings.System.canWrite(context);
+            default:
+                return false;
+        }
     }
 }
