@@ -88,6 +88,14 @@ public class Nammu {
     return fragment.shouldShowRequestPermissionRationale(permissions);
   }
 
+  public static boolean shouldShowRequestPermissionRationale(android.app.Fragment fragment,
+      String permissions) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      return fragment.shouldShowRequestPermissionRationale(permissions);
+    }
+    return false;
+  }
+
   public static void askForPermission(Activity activity, String permission,
       PermissionCallback permissionCallback) {
     askForPermission(activity, new String[] { permission }, permissionCallback);
@@ -197,6 +205,11 @@ public class Nammu {
     askForPermission(fragment, new String[] { permission }, permissionCallback);
   }
 
+  public static void askForPermission(android.app.Fragment fragment, String permission,
+      PermissionCallback permissionCallback) {
+    askForPermission(fragment, new String[] { permission }, permissionCallback);
+  }
+
   private static void askForPermission(Fragment fragment, String[] permissions,
       PermissionCallback permissionCallback) {
     if (permissionCallback == null) {
@@ -212,6 +225,25 @@ public class Nammu {
     permissionRequests.add(permissionRequest);
 
     fragment.requestPermissions(permissions, permissionRequest.getRequestCode());
+  }
+
+  private static void askForPermission(android.app.Fragment fragment, String[] permissions,
+      PermissionCallback permissionCallback) {
+    if (permissionCallback == null) {
+      return;
+    }
+    if (hasPermission(fragment.getActivity(), permissions)) {
+      permissionCallback.permissionGranted();
+      return;
+    }
+    PermissionRequest permissionRequest =
+        new PermissionRequest(new ArrayList<String>(Arrays.asList(permissions)),
+            permissionCallback);
+    permissionRequests.add(permissionRequest);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      fragment.requestPermissions(permissions, permissionRequest.getRequestCode());
+    }
   }
 
   public static void onRequestPermissionsResult(int requestCode, String[] permissions,
