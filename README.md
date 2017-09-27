@@ -45,6 +45,6 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:nammu:1.1.3'
+    compile 'com.github.tajchert:nammu:1.2.0'
 }
 ```
