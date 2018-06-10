@@ -210,7 +210,7 @@ public class Nammu {
     askForPermission(fragment, new String[] { permission }, permissionCallback);
   }
 
-  private static void askForPermission(Fragment fragment, String[] permissions,
+  public static void askForPermission(Fragment fragment, String[] permissions,
       PermissionCallback permissionCallback) {
     if (permissionCallback == null) {
       return;
@@ -227,7 +227,7 @@ public class Nammu {
     fragment.requestPermissions(permissions, permissionRequest.getRequestCode());
   }
 
-  private static void askForPermission(android.app.Fragment fragment, String[] permissions,
+  public static void askForPermission(android.app.Fragment fragment, String[] permissions,
       PermissionCallback permissionCallback) {
     if (permissionCallback == null) {
       return;
