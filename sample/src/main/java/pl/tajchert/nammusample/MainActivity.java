@@ -25,7 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pl.tajchert.nammu.Nammu;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
   private static final int REQUEST_CODE_LOCATION = 124;
   private static final int REQUEST_CODE_BOTH = 125;
 
-  @Bind(R.id.main_layout) View mLayout;
+  @BindView(R.id.main_layout) View mLayout;
 
   /**
    * Used to handle result of askForPermission for Contacts Permission, in better way than
