@@ -1,6 +1,6 @@
 Nammu - Runtime Permission Helper
 =======
-[![](https://jitpack.io/v/tajchert/Nammu.svg)](https://jitpack.io/#tajchert/Nammu)
+[![](https://jitpack.io/v/tajchert/Nammu.svg)](https://jitpack.io/#tajchert/Nammu) [![](https://jitci.com/gh/tajchert/Nammu/svg)](https://jitci.com/gh/tajchert/Nammu)
 
 Speed up your work with new Runtime Permissions introduced in Android 6.0 Marshmallow. This lib allows you to monitor permissions, check them in background and as well ask for a permission in easy way (callback).
 
@@ -45,6 +45,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:nammu:1.2.0'
+    compile 'com.github.tajchert:nammu:1.4.0'
 }
 ```
+### AndroidX, Kotlin...
+Android X was added in 1.3.0, last build without it is 1.2.4, Kotlin since 1.4.0.
