@@ -14,18 +14,17 @@
 * limitations under the License.
 */
 
-package pl.tajchert.nammusample;
+package pl.tajchert.nammusample
 
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import pl.tajchert.nammu.Nammu;
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import pl.tajchert.nammu.Nammu
 
-public class FragmentActivity extends AppCompatActivity {
+class FragmentActivity : AppCompatActivity() {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment);
-        Nammu.init(getApplicationContext());
-    }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_fragment)
+    Nammu.init(applicationContext)
+  }
 }
