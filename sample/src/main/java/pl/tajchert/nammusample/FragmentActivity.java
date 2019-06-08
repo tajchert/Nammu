@@ -17,7 +17,7 @@
 package pl.tajchert.nammusample;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import pl.tajchert.nammu.Nammu;
 
 public class FragmentActivity extends AppCompatActivity {
