@@ -45,7 +45,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tajchert:nammu:1.4.0'
+    compile 'com.github.tajchert:nammu:1.5.1'
 }
 ```
 ### AndroidX, Kotlin...
