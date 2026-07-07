@@ -50,3 +50,6 @@ dependencies {
 ```
 ### AndroidX, Kotlin...
 Android X was added in 1.3.0, last build without it is 1.2.4, Kotlin since 1.4.0.
+
+### Maintenance
+This repository is kept public as a reference for Android runtime permission handling and older app migrations.
